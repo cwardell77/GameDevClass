@@ -63,8 +63,8 @@ public class UnitTracker : MonoBehaviour
     {
         playerShip = null;
         playerTeamID = -1;
-        activeUnits.Clear();      
-    }
+        activeUnits.Clear();
+     }
 
     /// <summary>
     /// Returns the amount of active units that are enemies of the player.
