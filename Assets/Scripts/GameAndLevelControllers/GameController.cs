@@ -29,8 +29,9 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        if (Time.timeScale != 1) //Should handle in pausecontroller
-            Time.timeScale = 1;
+        PauseController.UnpauseAll();
+
+        CursorController.SetCursorAccordingToControls();
     }
 
 
