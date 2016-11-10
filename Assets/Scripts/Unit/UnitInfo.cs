@@ -6,6 +6,12 @@ using System.Collections;
 /// </summary>
 public class UnitInfo : MonoBehaviour
 {
+	[SerializeField]
+	string shipTitle;
+
+    [SerializeField]
+    UnitType unitType;
+
     [SerializeField]
     int teamID;
 
@@ -32,6 +38,9 @@ public class UnitInfo : MonoBehaviour
 
     [SerializeField]
     GameObject explosion;
+
+    [SerializeField]
+    GameObject notTargettable;
 
     [SerializeField]
     bool isPlayerShip;
@@ -70,6 +79,8 @@ public class UnitInfo : MonoBehaviour
 
     public float MaxYawSpeed { get { return maxYawSpeed; } }
 
+    public bool NotTargettable { get { return notTargettable; } }
+
     public float ShieldRegenRate
     {
         get { return shieldRegenRate; }
@@ -81,6 +92,10 @@ public class UnitInfo : MonoBehaviour
                 Debug.LogError("Shield Regen Rate can not be negative.");
         }
     }
+
+    public string ShipTitle {  get { return shipTitle; } }
+
+    public UnitType UnitType { get { return unitType; } }
 
     public int TeamID
     {
