@@ -5,7 +5,7 @@ using System.Collections;
 /// Provides static GameObject references to all unit prefabs.
 /// </summary>
 public class UnitReferences : MonoBehaviour {
-    static GameObject alliedCruiserHeavy1, alliedFighter1, enemyCruiserLight1, enemyFighter1, playerFighter1;
+    static GameObject alliedCruiserHeavy1, alliedFighter1, enemyCruiserLight1, enemyFighter1, playerFighter1,enemyBattleship1;
 
 
     static bool hasInitialized = false;
