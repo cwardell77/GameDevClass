@@ -21,6 +21,12 @@ public abstract class BaseLevelController : MonoBehaviour
     [SerializeField]
     protected GameObject[] allySpawns;
 
+    [SerializeField]
+    protected GameObject[] goToPoints;
+
+    [SerializeField]
+    protected Vector3 positionPlayerLooksAtSpawn;
+
     protected int currentPhase = 0;
 
     /// <summary>
@@ -58,6 +64,8 @@ public abstract class BaseLevelController : MonoBehaviour
     protected virtual void PlayerEnteredBoundary(GameObject boundary) { }
 
     protected virtual void PlayerLeftBoundary(GameObject boundary) { }
+
+    public Vector3 PositionPlayerLooksAtSpawn { get { return positionPlayerLooksAtSpawn; } }
 
     protected virtual void UnitDeath() { }
 }

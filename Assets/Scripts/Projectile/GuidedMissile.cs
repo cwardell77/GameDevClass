@@ -16,21 +16,32 @@ public class GuidedMissile : MonoBehaviour {
     private bool stopTurning;
     private Quaternion targetRotation;
     private bool destroy;
-
+    bool ownerAndTeamSet = false;
     // called once when object is instantiated
     void Start()
     {
         // set speed of guided missile by accessing ProjectileInfo component -- 53 recommended speed
         speed = GetComponent<ProjectileInfo>().Speed;
+    }
 
-        // if target not specified assume you are targeting PlayerFighter1
-        //if (targetObject == null) targetObject = GameObject.Find("PlayerFighter1");
+    void OnEnable() {
+        
+    }
 
-        // target the targetObject cords
-        //target = targetObject.transform.position;
-        if (GetComponent<ProjectileInfo>().Owner == UnitTracker.PlayerShip && TargettingController.Instance != null)
-            targetObject = TargettingController.Instance.Target;
-        if (targetObject == null) AcquireTarget();
+    void OnDisable()
+    {
+        GetComponent<ProjectileInfo>().Owner = null;
+        GetComponent<ProjectileInfo>().TeamID = -1;
+
+        ownerAndTeamSet = false;
+    }
+
+    void CheckIfOwnerAndTeamSet() { 
+        if (GetComponent<ProjectileInfo>().Owner != null && GetComponent<ProjectileInfo>().TeamID > -1)
+        {
+            ownerAndTeamSet = true;
+            AcquireTarget();
+        }
     }
 
     // called once every second
@@ -39,29 +50,16 @@ public class GuidedMissile : MonoBehaviour {
         // set up the timer
         timer += Time.deltaTime;
 
-        // destroy missile if missile's time is up
-        if (timer > timeTillExpire)
-        {
-            destroy = true;
-        }
-
-        // if die then create explosion, destroy object, cleanup explosion
-        if (destroy == true)
-        {
-            // instantiate explosion at collision location
-            GameObject explosion = Instantiate(Resources.Load("Explosions/hit_sparks"), transform.position, transform.rotation) as GameObject;
-
-            // destroy gameObject
-            Destroy(gameObject, 0);
-
-            // clean up explosion
-            Destroy(explosion, 3);
-        }
-
         // give the missile speed
         transform.Translate(0, 0, speed / 100);
 
-        if (targetObject == null)
+        if (!ownerAndTeamSet)
+        {
+            CheckIfOwnerAndTeamSet();
+            return;
+        }
+
+        if (targetObject == null || targetObject.activeInHierarchy == false)
         {
             AcquireTarget();
             return;
@@ -98,22 +96,32 @@ public class GuidedMissile : MonoBehaviour {
     /// </summary>
     void AcquireTarget()
     {
-        if (targetObject == null)
+        if (!ownerAndTeamSet)
+            return;
+
+        if (targetObject == null || targetObject.activeInHierarchy == false)
         {
-            GameObject closestEnemy = null;
-            foreach (GameObject go in UnitTracker.GetActiveEnemies(gameObject))
+            //If our owner is the player: Set our target as the player's target.
+            if (GetComponent<ProjectileInfo>().Owner == UnitTracker.PlayerShip && TargettingController.Instance != null)
+                targetObject = TargettingController.Instance.Target;
+
+            if (targetObject == null)
             {
-                if (closestEnemy == null)
+                GameObject closestEnemy = null;
+                foreach (GameObject go in UnitTracker.GetActiveEnemies(gameObject))
                 {
-                    closestEnemy = go;
-                    continue;
+                    if (closestEnemy == null)
+                    {
+                        closestEnemy = go;
+                        continue;
+                    }
+
+                    if ((go.transform.position - transform.position).magnitude < (closestEnemy.transform.position - transform.position).magnitude)
+                        closestEnemy = go;
                 }
 
-                if ((go.transform.position - transform.position).magnitude < (closestEnemy.transform.position - transform.position).magnitude)
-                    closestEnemy = go;
+                targetObject = closestEnemy;
             }
-
-            targetObject = closestEnemy;
 
             if (targetObject != null)
                 target = targetObject.transform.position;

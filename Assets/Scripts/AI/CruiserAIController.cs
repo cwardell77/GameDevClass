@@ -6,6 +6,9 @@ public class CruiserAIController : MonoBehaviour {
     [SerializeField]
     float rotationFactor;
 
+    [SerializeField]
+    public GameObject[] goToPoints;
+
     GameObject target;
     WeaponsController wc;
     Rigidbody myRigidbody;
@@ -20,7 +23,8 @@ public class CruiserAIController : MonoBehaviour {
         wc = GetComponent<WeaponsController>();
         myRigidbody = GetComponent<Rigidbody>();
         myInfo = GetComponent<UnitInfo>();
-	}
+
+    }
 	
 	void Update () {
 	    if (target == null && Time.time > nextTargetAcquireTime)
@@ -39,16 +43,22 @@ public class CruiserAIController : MonoBehaviour {
 
     void AcquireNewTarget()
     {
-        nextTargetAcquireTime = Time.time + targetAcquireInterval;
+        if (goToPoints != null)
+        {
 
-        UnitType[] targetableTypes = { UnitType.BATTLESHIP, UnitType.CRUISER, UnitType.STRUCTURE, UnitType.TURRET };
+        }
+        else {
+            nextTargetAcquireTime = Time.time + targetAcquireInterval;
 
-        target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, true);
+            UnitType[] targetableTypes = { UnitType.BATTLESHIP, UnitType.CRUISER, UnitType.STRUCTURE, UnitType.TURRET };
 
-        if (target == null)
-            target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, false);
+            target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, true);
 
-        //Debug.Log(target);
+            if (target == null)
+                target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, false);
+
+            //Debug.Log(target);
+        }
     }
 
     void AdjustThrottle()
