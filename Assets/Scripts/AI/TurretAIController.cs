@@ -27,7 +27,7 @@ public class TurretAIController : MonoBehaviour {
     [SerializeField]
     Material redMaterial;
 
-    GameObject target, turretBody, turretHead;
+    GameObject target, turretHead;
     WeaponsController wc;
 
     Vector3 aimOffset = new Vector3(0, -2, 0);
@@ -37,7 +37,6 @@ public class TurretAIController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        turretBody = transform.Find("TurretBody").gameObject;
         turretHead = transform.Find("TurretHead").gameObject;
         wc = GetComponent<WeaponsController>();
 
@@ -49,7 +48,7 @@ public class TurretAIController : MonoBehaviour {
         else
             GetComponent<CapsuleCollider>().enabled = true;
 
-        if (blueMaterial != null & redMaterial != null)
+        if (blueMaterial != null && redMaterial != null)
         {
             Material chosenMaterial = blueMaterial;
             if (color == TurretColor.RED)

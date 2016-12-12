@@ -15,8 +15,15 @@ public class AaronTestLevelController : BaseLevelController {
         UnitSpawner.SpawnUnit(UnitReferences.EnemyCruiserLight1, new Vector3(100, 50, 100));
         UnitSpawner.SpawnUnit(UnitReferences.AlliedCruiserHeavy1, new Vector3(0, 50, -200), Quaternion.Euler(0,0,0));
 
-        UnitSpawner.SpawnUnitsInArea(UnitReferences.EnemyFighter1, 100, enemySpawns[0]);
-        UnitSpawner.SpawnUnitsInArea(UnitReferences.AlliedFighter1, 20, allySpawns[0]);
+        UnitSpawner.SpawnUnitsInArea(UnitReferences.EnemyFighter1, 75, enemySpawns[0]);
+        UnitSpawner.SpawnUnitsInArea(UnitReferences.AlliedFighter1, 15, allySpawns[0]);
     }
-	
+
+    protected override void UnitDeath()
+    {
+        if (UnitTracker.GetActiveEnemyCount() == 0)
+            UnitSpawner.SpawnUnit(UnitReferences.EnemyBattleship, new Vector3(0, 100, 200));
+        
+    }
+
 }

@@ -98,6 +98,9 @@ public class GameMasterScripts : MonoBehaviour {
                 SceneManager.LoadScene("Level1");
                 break;
             case 3:
+                SceneManager.LoadScene("Escort");
+                break;
+            case 4:
                 SceneManager.LoadScene("Level3");
                 break;
         }

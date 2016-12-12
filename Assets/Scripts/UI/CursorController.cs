@@ -23,7 +23,6 @@ public class CursorController : MonoBehaviour
 
     public static void HideAll()
     {
-        Debug.Log("HideAll");
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         showReticule = false;

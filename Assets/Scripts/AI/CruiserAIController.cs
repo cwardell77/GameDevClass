@@ -6,6 +6,9 @@ public class CruiserAIController : MonoBehaviour {
     [SerializeField]
     float rotationFactor;
 
+    [SerializeField]
+    public GameObject[] goToPoints;
+    public int WayPointNumber = 0;
     GameObject target;
     WeaponsController wc;
     Rigidbody myRigidbody;
@@ -20,13 +23,13 @@ public class CruiserAIController : MonoBehaviour {
         wc = GetComponent<WeaponsController>();
         myRigidbody = GetComponent<Rigidbody>();
         myInfo = GetComponent<UnitInfo>();
-	}
+    }
 	
 	void Update () {
-	    if (target == null && Time.time > nextTargetAcquireTime)
+	    if ((target == null || !target.activeInHierarchy) && Time.time > nextTargetAcquireTime)
             AcquireNewTarget();
 
-        if (target != null)
+        if (target != null && target.activeInHierarchy && (goToPoints == null || goToPoints.Length == 0))
             wc.FirePrimaryWeapon();
     }
 
@@ -39,36 +42,72 @@ public class CruiserAIController : MonoBehaviour {
 
     void AcquireNewTarget()
     {
-        nextTargetAcquireTime = Time.time + targetAcquireInterval;
+        if (goToPoints != null && goToPoints.Length > 0)
+        {
+            if (WayPointNumber < goToPoints.Length)
+            {
+                target = goToPoints[WayPointNumber];
+            }
+        }
+        else {
+            nextTargetAcquireTime = Time.time + targetAcquireInterval;
 
-        UnitType[] targetableTypes = { UnitType.BATTLESHIP, UnitType.CRUISER, UnitType.STRUCTURE, UnitType.TURRET };
+            UnitType[] targetableTypes = { UnitType.BATTLESHIP, UnitType.CRUISER, UnitType.STRUCTURE, UnitType.TURRET };
 
-        target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, true);
+            target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, true);
 
-        if (target == null)
-            target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, false);
+            if (target == null)
+                target = TargetAcquirer.GetClosestEnemy(gameObject, targetableTypes, false);
 
-        //Debug.Log(target);
+            //Debug.Log(target);
+        }
     }
 
     void AdjustThrottle()
     {
-        if (target == null)
+        if (target == null || !target.activeInHierarchy)
         {
             if (currentThrottle > 0)
                 currentThrottle--;
             return;
         }
-
-        if ((target.transform.position - transform.position).magnitude > 250)
+        if (goToPoints != null && goToPoints.Length > 0)
         {
-            if (currentThrottle < 100)
-                currentThrottle++;
+            if ((target.transform.position - transform.position).magnitude > 30)
+            {
+                if (currentThrottle < 75)
+                    currentThrottle++;
+            }
+            else
+            {
+                if (currentThrottle > 0)
+                {
+                    currentThrottle = 0;
+                    if (WayPointNumber < goToPoints.Length)
+                    {
+                        WayPointNumber++;
+                        AcquireNewTarget();
+                    }
+                    else
+                    {
+                        goToPoints = null;
+                        AcquireNewTarget();
+                    }
+                }
+                
+            }
         }
-        else
-        {
-            if (currentThrottle > 0)
-                currentThrottle--;
+        else {
+            if ((target.transform.position - transform.position).magnitude > 250)
+            {
+                if (currentThrottle < 100)
+                    currentThrottle++;
+            }
+            else
+            {
+                if (currentThrottle > 0)
+                    currentThrottle--;
+            }
         }
     }
 
@@ -84,5 +123,10 @@ public class CruiserAIController : MonoBehaviour {
     void SetVelocity()
     {
         myRigidbody.velocity = transform.forward * myInfo.MaxSpeed  * ((float)currentThrottle / 100);
+    }
+
+    void onTriggerEnter(Collider other)
+    {
+        WayPointNumber++;
     }
 }

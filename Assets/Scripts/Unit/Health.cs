@@ -16,11 +16,24 @@ public class Health : MonoBehaviour
     float shieldRegenRate;
     float nextShieldRegenTime;
 
+    bool isInvincible = false;
+    bool hasInitialized = false;
     public int CurrentHealth { get { return currentHealth; } }
     public int CurrentShields { get { return currentShields; } }
+    public bool IsInvincible { set { isInvincible = value; } }
 
     void Start()
     {
+        Initialize();
+    }
+
+    void Initialize()
+    {
+        if (hasInitialized)
+            return;
+
+        hasInitialized = true;
+
         myInfo = GetComponent<UnitInfo>();
         currentHealth = myInfo.MaxHealth;
         currentShields = myInfo.MaxShields;
@@ -64,6 +77,8 @@ public class Health : MonoBehaviour
 
     void AdjustHPDisplay()
     {
+        Initialize();
+
         if (myInfo.IsPlayerShip && HUDController.Instance != null)
         {
             HUDController.Instance.SetHealth(currentHealth, myInfo.MaxHealth);
@@ -105,7 +120,7 @@ public class Health : MonoBehaviour
             }
             catch (System.Exception ex)
             {
-                Debug.LogError(ex.Message);
+                Debug.LogError(ex.Message + "\n" + ex.StackTrace);
             }
         }
         else //If this unit is the player: Remove its reference in the unitTracker and raise the OnPlayerDeath event.
@@ -117,7 +132,7 @@ public class Health : MonoBehaviour
             }
             catch (System.Exception ex)
             {
-                Debug.LogError(ex.Message + ex.StackTrace);
+                Debug.LogError(ex.Message + "\n" + ex.StackTrace);
             }
         }
 
@@ -129,6 +144,9 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int dmg)
     {
+        if (isInvincible)
+            return;
+
         if (currentShields >= dmg)
         {
 			//If a shield particle system is present...

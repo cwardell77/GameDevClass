@@ -23,7 +23,7 @@ public class BoundaryController : MonoBehaviour {
                 }
                 catch (System.Exception ex)
                 {
-                    Debug.LogError(ex.Message);
+                    Debug.LogError(ex.Message + "\n" + ex.StackTrace);
                 }
             }
             else
@@ -35,7 +35,7 @@ public class BoundaryController : MonoBehaviour {
                 }
                 catch (System.Exception ex)
                 {
-                    Debug.LogError(ex.Message);
+                    Debug.LogError(ex.Message + "\n" + ex.StackTrace);
                 }
             }
         }
